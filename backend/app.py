@@ -4,32 +4,12 @@ from dotenv import load_dotenv
 import os
 import requests
 import maritalk
-
+import json
 
 def load_configuration():
     load_dotenv()
     api_key = os.getenv('API_KEY')
     return api_key
-
-
-def get_maritalk_response(request_data, headers):
-
-    response = requests.post(
-        URL,
-        json=request_data,
-        headers=headers
-    )
-
-    if response.status_code == 429:
-        print("rate limited, tente novamente em breve")
-
-    elif response.ok:
-        data = response.json()
-        return (data["answer"])
-
-    else:
-        response.raise_for_status()
-
 
 app = Flask(__name__)
 CORS(app)
@@ -38,14 +18,33 @@ api_key = load_configuration()
 if api_key is None:
     raise ValueError("API_KEY não foi configurada corretamente.")
 
-URL = "https://chat.maritaca.ai/api/chat/inference"
+URL = "https://api.openai.com/v1/chat/completions"
 
-MODEL = maritalk.MariTalk(key=api_key)
+MODEL = "gpt-3.5-turbo"
 
-auth_header = {
-    "authorization": f"Key {api_key}"
+AUTH_HEADER = {
+    "Authorization": f"Bearer {api_key}", "Content-Type": "application/json"
 }
 
+def get_gpt_response(request_data):
+    try:
+        response = requests.post(
+            URL,
+            data=request_data,
+            headers=AUTH_HEADER
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            data_response = data["choices"][0]["message"]["content"]
+            print(data_response)
+            return data_response
+        else:
+            return f"Erro ao chamar a API OpenAI: {response.status_code}"
+    except Exception as e:
+        return f"Erro na solicitação à API OpenAI: {str(e)}"
+
+    
 
 @app.route('/generate_history', methods=['POST'])
 def generate_history():
@@ -58,17 +57,17 @@ def generate_history():
         environment = data['environment']
         story_length = data['story_length']
 
-        prompt = f"Por favor, conte uma história envolvendo {qtd_person} personagens, com o público-alvo sendo {target_public}, com foco no tema {theme} e o ambiente em que a história acontece é {environment}. A história deve ser {story_length}"
-
+        prompt = f"Por favor, conte uma história envolvendo '{qtd_person}' personagens, com o público-alvo sendo '{target_public}', com foco no tema '{theme}' e o ambiente em que a história acontece é '{environment}'. A história deve ter um tamanho '{story_length}'. Além disso, defina um título para a história e coloque-o em negrito antes do primeiro paragrafo."
+        
         request_data = {
-            "messages": prompt,
-            "chat_mode": True,
-            "do_sample": True,
-            "max_tokens": 1000,
-            "temperature": 0.7,
+            "model": MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+            "top_p": 0.8
         }
 
-        response = get_maritalk_response(request_data, auth_header)
+        request_data = json.dumps(request_data)
+
+        response = get_gpt_response(request_data)
         return jsonify({'history': response})
     except Exception as e:
         return jsonify({'error': str(e)})
