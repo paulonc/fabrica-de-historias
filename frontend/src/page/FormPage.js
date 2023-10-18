@@ -58,8 +58,11 @@ const FormPage = () => {
       axios
         .post(apiUrl, requestData)
         .then((response) => {
-          navigate("/historia", { state: { historyData: response.data } });
-        })
+            if (response.data.history && response.data.title) {
+                navigate("/historia", { state: { historyData: response.data } });
+              } else {
+                navigate("/error");
+        }})
         .catch((error) => {
           console.error(error);
         });
