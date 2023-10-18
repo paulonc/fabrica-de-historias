@@ -3,8 +3,8 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import requests
-import maritalk
 import json
+import re
 
 def load_configuration():
     load_dotenv()
@@ -15,11 +15,11 @@ app = Flask(__name__)
 CORS(app)
 
 api_key = load_configuration()
+
 if api_key is None:
     raise ValueError("API_KEY não foi configurada corretamente.")
 
 URL = "https://api.openai.com/v1/chat/completions"
-
 MODEL = "gpt-3.5-turbo"
 
 AUTH_HEADER = {
@@ -68,7 +68,13 @@ def generate_history():
         request_data = json.dumps(request_data)
 
         response = get_gpt_response(request_data)
-        return jsonify({'history': response})
+
+        title = re.search(r'\*\*(.*?)\*\*', response).group(1)
+        json_data = {
+            "title": title,
+            "history": response.replace(f"**{title}**", "").strip()
+        }
+        return jsonify(json_data)
     except Exception as e:
         return jsonify({'error': str(e)})
 
