@@ -1,17 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Typography,
-  Box,
-  TextField,
-  Container,
-  Paper,
-  CircularProgress,
-} from "@mui/material";
-import CustomRadioGroup from "../components/CustomRadioGroup";
-import CustomButton from "../components/CustomButton";
+import { Typography, Container, Paper } from "@mui/material";
 import axios from "axios";
 import BackgroundLayout from "../components/Layout/BackgroundLayout";
+import Form from "../components/Form";
 
 const apiUrl = "http://localhost:5000/generate_history";
 
@@ -23,6 +15,7 @@ const FormPage = () => {
     publicoAlvo: "",
     tema: "",
     ambiente: "",
+    enredo: "",
     comprimentoHistoria: "",
   });
 
@@ -53,16 +46,18 @@ const FormPage = () => {
         target: formData.publicoAlvo,
         theme: formData.tema,
         environment: formData.ambiente,
+        plot: formData.enredo,
         story_length: formData.comprimentoHistoria,
       };
       axios
         .post(apiUrl, requestData)
         .then((response) => {
-            if (response.data.history && response.data.title) {
-                navigate("/historia", { state: { historyData: response.data } });
-              } else {
-                navigate("/error");
-        }})
+          if (response.data.history && response.data.title) {
+            navigate("/historia", { state: { historyData: response.data } });
+          } else {
+            navigate("/error");
+          }
+        })
         .catch((error) => {
           console.error(error);
         });
@@ -72,16 +67,17 @@ const FormPage = () => {
     }
   };
 
-  const radioOptions = [
-    { value: "pequena", label: "Pequena" },
-    { value: "media", label: "Média" },
-    { value: "longa", label: "Longa" },
-  ];
-
   return (
     <BackgroundLayout>
       <Container maxWidth="sm">
-        <Paper elevation={3} style={{ padding: "20px", marginTop: "20px" }}>
+        <Paper
+          elevation={3}
+          style={{
+            padding: "20px",
+            marginTop: "20px",
+            height: "auto",
+          }}
+        >
           <Typography
             variant="h4"
             display="flex"
@@ -90,76 +86,12 @@ const FormPage = () => {
           >
             Preencha o formulário
           </Typography>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              name="personagens"
-              label="Quantidade de Personagens"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={formData.personagens}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              name="publicoAlvo"
-              label="Público-Alvo"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={formData.publicoAlvo}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              name="tema"
-              label="Tema"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={formData.tema}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              name="ambiente"
-              label="Ambiente"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={formData.ambiente}
-              onChange={handleChange}
-              required
-            />
-            <Typography
-              variant="h6"
-              gutterBottom
-              display="flex"
-              justifyContent="center"
-            >
-              Tamanho da História
-            </Typography>
-            <CustomRadioGroup
-              name="comprimentoHistoria"
-              value={formData.comprimentoHistoria}
-              onChange={handleChange}
-              options={radioOptions}
-            />
-            {isLoading ? (
-              <Box display="flex" justifyContent="center">
-                <CircularProgress />
-              </Box>
-            ) : (
-              <Box display="flex" justifyContent="center">
-                <CustomButton
-                  label="Enviar"
-                  width="200px"
-                  height="60px"
-                  onClick={handleSubmit}
-                />
-              </Box>
-            )}
-          </form>
+          <Form
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            isLoading={isLoading}
+          />
         </Paper>
       </Container>
     </BackgroundLayout>

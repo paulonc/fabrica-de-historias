@@ -7,7 +7,7 @@ const CustomButton = ({ label, onClick , width, height}) => {
       variant="contained"
       color="primary"
       style={{
-        backgroundColor: "darkmagenta",
+        backgroundColor: "#6A0DAD",
         marginTop: "1rem",
         width: width || "160px",
         height: height || "60px",
