@@ -37,7 +37,6 @@ def get_gpt_response(request_data):
         if response.status_code == 200:
             data = response.json()
             data_response = data["choices"][0]["message"]["content"]
-            print(data_response)
             return data_response
         else:
             return f"Erro ao chamar a API OpenAI: {response.status_code}"
@@ -55,6 +54,7 @@ def generate_history():
         target_public = data['target']
         theme = data['theme']
         environment = data['environment']
+        plot = data['plot']
         story_length = data['story_length']
 
         prompt = f"Por favor, conte uma história envolvendo '{qtd_person}' personagens, com o público-alvo sendo '{target_public}', com foco no tema '{theme}' e o ambiente em que a história acontece é '{environment}'. A história deve ter um tamanho '{story_length}'. Além disso, defina um título para a história e coloque-o em negrito antes do primeiro paragrafo."
