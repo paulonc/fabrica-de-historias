@@ -57,7 +57,11 @@ def generate_history():
         plot = data['plot']
         story_length = data['story_length']
 
-        prompt = f"Por favor, conte uma história envolvendo '{qtd_person}' personagens, com o público-alvo sendo '{target_public}', com foco no tema '{theme}' e o ambiente em que a história acontece é '{environment}'. A história deve ter um tamanho '{story_length}'. Além disso, defina um título para a história e coloque-o em negrito antes do primeiro paragrafo."
+        prompt = f"""Você é um escritor de histórias de gêneros diversos. Sua tarefa é construir uma história envolvendo '{qtd_person}' personagens, \
+            com o público-alvo sendo '{target_public}', \
+            com foco no tema '{theme}' e o ambiente em que a história acontece é '{environment}'. \
+            A história deve ter um tamanho '{story_length}'. \
+            Além disso, defina um título para a história e coloque-o em negrito antes do primeiro paragrafo. Escreva em um tom conciso e profissional."""
         
         request_data = {
             "model": MODEL,
