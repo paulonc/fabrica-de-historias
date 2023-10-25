@@ -57,7 +57,7 @@ def generate_history():
         plot = data['plot']
         story_length = data['story_length']
 
-        if plot != None:
+        if plot != "":
             prompt = f"""Você é um escritor de histórias de gêneros diversos. Sua tarefa é construir uma história envolvendo '{qtd_person}' personagens, \
                 com o público-alvo sendo '{target_public}', \
                 com foco no tema '{theme}' e o ambiente em que a história acontece é '{environment}'. \
