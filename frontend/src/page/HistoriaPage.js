@@ -33,9 +33,18 @@ const HistoriaPage = () => {
     height: "auto",
   };
 
+  const imageStyle = {
+    height: "512px",
+    width: "auto",
+    margin: "0 auto",
+    display: "block",
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    border: "1px solid #ccc",
+  };
+
   const storyTextStyle = {
     fontSize: "20px",
-    fontWeight: 600,
+    fontWeight: 500,
   };
 
   const renderParagraphs = (text) => {
@@ -54,12 +63,7 @@ const HistoriaPage = () => {
           <CardMedia
             component="img"
             alt="Story Image"
-            style={{
-              height: "512px",
-              width: "auto",
-              margin: "0 auto",
-              display: "block",
-            }}
+            style={imageStyle}
             image={image}
           />
           <CardContent>
