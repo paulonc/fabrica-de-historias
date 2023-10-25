@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+import openai
 import os
 import requests
 import json
@@ -43,7 +44,16 @@ def get_gpt_response(request_data):
     except Exception as e:
         return f"Erro na solicitação à API OpenAI: {str(e)}"
 
-    
+def get_image_response(prompt):
+    openai.api_key = load_configuration()
+    data = openai.Image.create(
+        prompt=prompt,
+        n=1,
+        size="512x512"
+    )
+
+    return data["data"][0]["url"]
+
 
 @app.route('/generate_history', methods=['POST'])
 def generate_history():
@@ -81,10 +91,14 @@ def generate_history():
 
         response = get_gpt_response(request_data)
 
+        image = get_image_response("animação de uma nave espacial")
         title = re.search(r'\*\*(.*?)\*\*', response).group(1)
+        history = response.replace(f"**{title}**", "").strip()
+
         json_data = {
             "title": title,
-            "history": response.replace(f"**{title}**", "").strip()
+            "history": history,
+            "image": image
         }
         return jsonify(json_data)
     except Exception as e:
