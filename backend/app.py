@@ -98,7 +98,6 @@ def generate_history():
         description_history = get_gpt_response(prompt_description_history)
 
         prompt_generate_image = f"""Crie uma imagem de desenho animado que represente a seguinte cena da história: '{description_history}'."""
-        print(prompt_generate_image)
         image = get_image_response(prompt_generate_image)
 
         json_data = {
