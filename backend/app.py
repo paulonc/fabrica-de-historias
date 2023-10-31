@@ -27,7 +27,15 @@ AUTH_HEADER = {
     "Authorization": f"Bearer {api_key}", "Content-Type": "application/json"
 }
 
-def get_gpt_response(request_data):
+def get_gpt_response(prompt):
+    request_data = {
+        "model": MODEL,
+        "messages": [{"role": "user", "content": prompt}],
+        "top_p": 0.8
+    }
+
+    request_data = json.dumps(request_data)
+
     try:
         response = requests.post(
             URL,
@@ -81,19 +89,17 @@ def generate_history():
                 A história deve ter um tamanho '{story_length}'. \
                 Além disso, defina um título para a história e coloque-o em negrito antes do primeiro paragrafo. Escreva em um tom conciso e profissional."""
         
-        request_data = {
-            "model": MODEL,
-            "messages": [{"role": "user", "content": prompt}],
-            "top_p": 0.8
-        }
+        response = get_gpt_response(prompt)
 
-        request_data = json.dumps(request_data)
-
-        response = get_gpt_response(request_data)
-
-        image = get_image_response("animação de uma nave espacial")
         title = re.search(r'\*\*(.*?)\*\*', response).group(1)
         history = response.replace(f"**{title}**", "").strip()
+
+        prompt_description_history = f"""A partir da história de fundo fornecida - '{history}', destaque de forma concisa e envolvente as características distintas dos personagens e do ambiente, criando um resumo em uma única frase que capturaria a essência da narrativa em um estilo de desenho animado."""
+        description_history = get_gpt_response(prompt_description_history)
+
+        prompt_generate_image = f"""Crie uma imagem de desenho animado que represente a seguinte cena da história: '{description_history}'."""
+        print(prompt_generate_image)
+        image = get_image_response(prompt_generate_image)
 
         json_data = {
             "title": title,
