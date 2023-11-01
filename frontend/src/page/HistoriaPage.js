@@ -23,7 +23,6 @@ const HistoriaPage = () => {
   };
 
   const containerStyle = {
-    overflowY: "scroll",
     maxHeight: "100vh",
   };
 

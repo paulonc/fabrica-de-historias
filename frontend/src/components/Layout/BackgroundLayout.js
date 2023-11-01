@@ -8,6 +8,7 @@ const backgroundStyle = {
   backgroundRepeat: "no-repeat",
   backgroundPosition: "center",
   minHeight: "100vh",
+  overflowY: "scroll"
 };
 
 const BackgroundLayout = ({ children }) => {
